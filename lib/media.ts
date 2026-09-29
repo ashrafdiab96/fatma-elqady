@@ -59,14 +59,35 @@ export type MediaKey = keyof typeof manifest
 
 export type Media = { key: MediaKey; src: string; srcSet: string; width: number; height: number; ratio: number }
 
+const BASE_PATH =
+  process.env.NODE_ENV === "production"
+    ? "/fatma-elqady"
+    : "";
+
 export function media(key: MediaKey): Media {
-  const { w, h, widths } = manifest[key]
-  const srcSet = widths.map((width) => `/work/${key}-${width}.webp ${width}w`).join(", ")
-  const mid = widths.find((width) => width >= 1280) ?? widths[widths.length - 1]
-  return { key, src: `/work/${key}-${mid}.webp`, srcSet, width: w, height: h, ratio: w / h }
+  const { w, h, widths } = manifest[key];
+
+  const srcSet = widths
+    .map(
+      (width) =>
+        `${BASE_PATH}/work/${key}-${width}.webp ${width}w`
+    )
+    .join(", ");
+
+  const mid =
+    widths.find((width) => width >= 1280) ??
+    widths[widths.length - 1];
+
+  return {
+    key,
+    src: `${BASE_PATH}/work/${key}-${mid}.webp`,
+    srcSet,
+    width: w,
+    height: h,
+    ratio: w / h,
+  };
 }
 
-/** Smallest export — used for hero trail / thumbnails. */
 export function thumb(key: MediaKey) {
-  return `/work/${key}-${manifest[key].widths[0]}.webp`
+  return `${BASE_PATH}/work/${key}-${manifest[key].widths[0]}.webp`;
 }
