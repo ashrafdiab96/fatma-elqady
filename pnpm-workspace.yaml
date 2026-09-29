@@ -5,4 +5,4 @@ minimumReleaseAgeExclude:
   - next
 
 allowBuilds:
-  pnpm: set this to true or false
+  pnpm: false
