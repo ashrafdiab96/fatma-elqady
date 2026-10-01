@@ -1,26 +1,26 @@
 'use client'
 
-import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
-import { ArrowUpRight, Maximize2, Pause, Play, Volume2, VolumeX } from 'lucide-react'
+import { useInView, useReducedMotion } from 'framer-motion'
+import { Maximize2, Pause, Play, Volume2, VolumeX } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { getProject, motionVideo } from '@/lib/projects'
-import { ArtImage, MaskLines, Reveal, SectionLabel, ease } from './primitives'
+import { motionVideo } from '@/lib/projects'
+import { MaskLines, Reveal, SectionLabel } from './primitives'
 
 const format = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`
 
-export function MotionSection({ onOpen }: { onOpen: (slug: string) => void }) {
+export function MotionSection() {
   return (
     <section id="motion" className="motion-section page-section" aria-labelledby="motion-title">
-      <SectionLabel index="03" label="Motion / animation" right="Moving image" />
+      <SectionLabel index="03" label="Motion & video" right="A growing practice" />
       <div className="motion-layout">
         <div className="motion-heading">
           <MaskLines as="h2" id="motion-title" lines={['Stories', <>that <em>move.</em></>]} />
-          <p>Selected motion study<br />Fatma Elqady / 07v02</p>
+          <p className="motion-copy">Alongside design and illustration, Fatma animates and edits: 2D animation, motion graphics and video for social.</p>
+          <p className="motion-caption">Selected motion study<br />Fatma Elqady / 07v02</p>
         </div>
         <Reveal className="motion-player">
           <VideoPlayer />
         </Reveal>
-        <FrameSequence onOpen={onOpen} />
       </div>
     </section>
   )
@@ -102,54 +102,6 @@ function VideoPlayer() {
         <span className="video-time">{format(time.duration)}</span>
         <button type="button" onClick={toggleMute} aria-label={muted ? 'Unmute video' : 'Mute video'}>{muted ? <VolumeX aria-hidden="true" /> : <Volume2 aria-hidden="true" />}</button>
         <button type="button" onClick={fullscreen} aria-label="Play video fullscreen"><Maximize2 aria-hidden="true" /></button>
-      </div>
-    </div>
-  )
-}
-
-const sequence = getProject('accessorize-summer')!
-
-function FrameSequence({ onOpen }: { onOpen: (slug: string) => void }) {
-  const ref = useRef<HTMLButtonElement>(null)
-  const reduce = useReducedMotion()
-  const inView = useInView(ref, { margin: '-15% 0px' })
-  const [frame, setFrame] = useState(0)
-  const [hovered, setHovered] = useState(false)
-  const frames = sequence.images.filter((image) => image.ratio < 1.2)
-
-  useEffect(() => {
-    if (!inView || reduce || hovered) return
-    const id = window.setInterval(() => setFrame((value) => (value + 1) % frames.length), 1700)
-    return () => window.clearInterval(id)
-  }, [inView, reduce, hovered, frames.length])
-
-  return (
-    <div className="frame-sequence">
-      <button
-        ref={ref}
-        type="button"
-        className="frame-stage"
-        onClick={() => onOpen(sequence.slug)}
-        onPointerEnter={() => setHovered(true)}
-        onPointerLeave={() => setHovered(false)}
-        aria-label={`Open ${sequence.title}`}
-        data-cursor="Open"
-      >
-        <AnimatePresence initial={false}>
-          <motion.div key={frames[frame].key} className="frame-image" initial={{ opacity: 0, scale: 1.04 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.7, ease }}>
-            <ArtImage image={frames[frame]} alt="" sizes="(min-width: 900px) 26vw, 80vw" />
-          </motion.div>
-        </AnimatePresence>
-      </button>
-      <div className="frame-meta">
-        <span className="eyebrow">Social sequence · {String(frame + 1).padStart(2, '0')}/{String(frames.length).padStart(2, '0')}</span>
-        <p>{sequence.title}</p>
-        <div className="frame-ticks" aria-hidden="true">
-          {frames.map((image, index) => <span key={image.key} className={index === frame ? 'is-active' : ''} />)}
-        </div>
-        <button type="button" className="text-link" onClick={() => onOpen(sequence.slug)}>
-          View set <ArrowUpRight aria-hidden="true" />
-        </button>
       </div>
     </div>
   )

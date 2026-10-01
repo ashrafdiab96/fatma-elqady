@@ -1,46 +1,60 @@
+import { mascotPieceCount } from './mascot'
 import { media, type Media, type MediaKey } from './media'
 
-export type ProjectCategory =
-  | 'Picture Books'
-  | 'Illustration'
-  | 'Character Design'
-  | 'Storyboards / Concept Art'
-  | 'Campaigns'
-  | 'Graphic Design'
-  | 'Motion & Animation'
-
+/** A single body of work — one client set, series or study. Shown as a group inside a work category. */
 export type Project = {
   slug: string
   title: string
-  category: ProjectCategory
   description: string
-  cover: Media
-  images: Media[]
   context?: string
-  year?: string
-  behance?: string
-  /** Colour sampled from the artwork, used to tint hover states and the project overlay. */
-  tone: string
+  images: Media[]
+  /** Another work page that tells more of this story. */
+  related?: { work: WorkSlug; label: string }
 }
 
-type ProjectInput = Omit<Project, 'cover' | 'images'> & { cover?: MediaKey; images: MediaKey[] }
+type ProjectInput = Omit<Project, 'images'> & { images: MediaKey[] }
 
-const define = ({ cover, images, ...project }: ProjectInput): Project => ({
-  ...project,
-  cover: media(cover ?? images[0]),
-  images: images.map(media),
-})
+const define = ({ images, ...project }: ProjectInput): Project => ({ ...project, images: images.map(media) })
 
-/** Curated exhibition order. */
-export const projects: Project[] = [
-  define({
+export const projects = {
+  sahlSocial: define({
+    slug: 'sahl',
+    title: 'Sahl',
+    context: 'Bill-payment app · Social content',
+    related: { work: 'sahl-mascot', label: 'How Budz was designed' },
+    description:
+      'Always-on social content for Sahl, an Egyptian bill-payment app. Each service — electricity, internet, gas and water, university fees, mobile recharge — gets a post in bold Arabic type on Sahl’s signature blue, most of them fronted by the brand’s mascot, Budz.',
+    images: [
+      'sahl-post-budz-id',
+      'sahl-post-electricity',
+      'sahl-post-app',
+      'sahl-post-internet',
+      'sahl-post-gas-water',
+      'sahl-post-university',
+      'sahl-story-electricity',
+      'sahl-post-orange',
+    ],
+  }),
+  xpark: define({
+    slug: 'xpark-infinix',
+    title: 'Xpark × Infinix',
+    context: 'Transsion / Xpark · Product launch posts',
+    description: 'Social product posts for Infinix smartphones — Zero X Pro, Note 11, Note 10 and Hot 11 — each built around a scene breaking out of the device screen.',
+    images: ['xpark-zero-x-astronaut', 'xpark-zero-x-dress', 'xpark-note-11', 'xpark-note-10', 'xpark-hot-11'],
+  }),
+  advertising: define({
+    slug: 'advertising-visuals',
+    title: 'Advertising Key Visuals',
+    context: 'Banque Misr · Almarai · Jira Market',
+    description: 'Photo-composited social and print visuals for banking, dairy and grocery-delivery brands.',
+    images: ['ad-banque-misr', 'ad-almarai', 'ad-jira-market'],
+  }),
+  marzouk: define({
     slug: 'marzouk-family',
     title: 'The Marzouk Family on Holiday',
-    category: 'Picture Books',
+    context: 'Arabic picture book · Cover & spreads',
     description:
       'Cover and interior spreads for عائلة مرزوق في المصيف, an Arabic children’s picture book. The Marzouk family’s trip to Baltim beach — watermelon, a runaway slipper, a rescue at sea and a quiet talk at sunset — painted with warmth and slapstick.',
-    context: 'Arabic picture book · Cover & spreads',
-    tone: '#7fc3d6',
     images: [
       'marzouk-cover',
       'marzouk-spread-1',
@@ -55,128 +69,214 @@ export const projects: Project[] = [
       'marzouk-mockup-portrait',
     ],
   }),
-  define({
-    slug: 'egyptian-mermaid',
-    title: 'Egyptian Mermaid',
-    category: 'Character Design',
-    description: 'A Pharaonic mermaid — cobra crown, broad collar and pleated gold belt — painted with loose, feathered brushwork over a hieroglyph wall.',
-    tone: '#9dc3bb',
-    images: ['mermaid', 'mermaid-clean'],
+  marzoukPrint: define({
+    slug: 'marzouk-print',
+    title: 'Cover & print mockups',
+    context: 'The Marzouk Family on Holiday',
+    description: 'The portrait cover and the book in print.',
+    images: ['marzouk-cover-portrait', 'marzouk-mockup-cover', 'marzouk-mockup-portrait', 'marzouk-mockup-open-1', 'marzouk-mockup-open-2'],
   }),
-  define({
-    slug: 'xpark-infinix',
-    title: 'Xpark × Infinix',
-    category: 'Campaigns',
-    description: 'Social product posts for Infinix smartphones — Zero X Pro, Note 11, Note 10 and Hot 11 — each built around a scene breaking out of the device screen.',
-    context: 'Transsion / Xpark',
-    tone: '#2d6aa3',
-    images: ['xpark-zero-x-astronaut', 'xpark-zero-x-dress', 'xpark-note-11', 'xpark-note-10', 'xpark-hot-11'],
-  }),
-  define({
-    slug: 'atmospheric-landscapes',
-    title: 'Atmospheric Landscapes',
-    category: 'Illustration',
-    description: 'Painterly studies of rivers, fields, forests and coastlines, built from light, atmosphere and expressive brushwork.',
-    tone: '#d9a441',
-    images: ['landscape-marsh', 'landscape-forest', 'landscape-hills', 'landscape-dunes'],
-  }),
-  define({
-    slug: 'character-narrative',
-    title: 'Character & Narrative',
-    category: 'Illustration',
-    description: 'Character-led worlds with warmth, wit and a strong sense of place.',
-    tone: '#ff8fa3',
-    images: ['narrative-bedroom', 'narrative-purple', 'narrative-mexico'],
-  }),
-  define({
+  characterStudies: define({
     slug: 'character-studies',
     title: 'Character Studies',
-    category: 'Character Design',
     description: 'Personalities built from shape and posture — from a sneaker-wearing jam jar to flat vector figures and painted fashion characters.',
-    tone: '#c8173f',
     images: ['character-jam', 'character-drink', 'character-circle', 'character-flare', 'character-locs'],
   }),
-  define({
-    slug: 'background-art',
-    title: 'Background Art / Visual Development',
-    category: 'Storyboards / Concept Art',
-    description: 'Environment design, background art and visual development across imagined worlds.',
-    tone: '#5a6fc4',
-    images: ['bg-temple', 'bg-room', 'bg-interior', 'bg-lighthouse'],
+  mermaid: define({
+    slug: 'egyptian-mermaid',
+    title: 'Egyptian Mermaid',
+    description: 'A Pharaonic mermaid — cobra crown, broad collar and pleated gold belt — painted with loose, feathered brushwork over a hieroglyph wall.',
+    images: ['mermaid', 'mermaid-clean'],
   }),
-  define({
+  portraits: define({
     slug: 'painted-portraits',
     title: 'Portrait Studies',
-    category: 'Illustration',
     description: 'Digital portrait studies moving between painterly rendering and flat vector shapes.',
-    tone: '#e8356d',
     images: ['portrait-koi', 'portrait-chess', 'portrait-flowers'],
   }),
-  define({
+  googleYoutube: define({
     slug: 'google-youtube',
     title: 'Google & YouTube Illustration',
-    category: 'Illustration',
-    description: 'Illustration work developed with the TechyTypes Egypt marketing and design team for Google and YouTube.',
     context: 'TechyTypes Egypt · 2020–2021',
-    tone: '#3d8f6a',
+    description: 'Illustration work developed with the TechyTypes Egypt marketing and design team for Google and YouTube.',
     images: ['balcony', 'narrative-mexico'],
   }),
-  define({
-    slug: 'accessorize-summer',
-    title: 'Accessorize Summer Sale',
-    category: 'Campaigns',
-    description: 'A social set for a summer sale and new collection — soft organic shapes, botanical line art and close editorial crops of jewellery.',
-    tone: '#e5389a',
-    images: ['accessorize-1', 'accessorize-2', 'accessorize-3', 'accessorize-4', 'accessorize-5', 'accessorize-title'],
+  narrative: define({
+    slug: 'character-narrative',
+    title: 'Character & Narrative',
+    description: 'Character-led worlds with warmth, wit and a strong sense of place.',
+    images: ['narrative-bedroom', 'narrative-purple'],
   }),
-  define({
+  musicStage: define({
     slug: 'music-stage',
     title: 'Music Stage',
-    category: 'Illustration',
     description: 'One composition in two finishes: crisp flat vector shapes, then reworked with grain and soft gradients.',
-    tone: '#b0306e',
     images: ['music-textured', 'music-flat'],
   }),
-  define({
-    slug: 'advertising-visuals',
-    title: 'Advertising Key Visuals',
-    category: 'Graphic Design',
-    description: 'Photo-composited social and print visuals for banking, dairy and grocery-delivery brands.',
-    tone: '#2f8f7c',
-    images: ['ad-banque-misr', 'ad-almarai', 'ad-jira-market'],
+  landscapes: define({
+    slug: 'atmospheric-landscapes',
+    title: 'Atmospheric Landscapes',
+    description: 'Painterly studies of rivers, fields, forests and coastlines, built from light, atmosphere and expressive brushwork.',
+    images: ['landscape-marsh', 'landscape-forest', 'landscape-hills', 'landscape-dunes'],
   }),
-  define({
-    slug: 'storyboards-concepts',
-    title: 'Storyboards & Concepts',
-    category: 'Storyboards / Concept Art',
-    description: 'Black-and-white composition studies exploring space, tension and visual narrative.',
-    tone: '#7b3fc4',
-    images: ['story-spooky', 'bg-lighthouse', 'bg-room'],
-  }),
-  define({
+  scenes: define({
     slug: 'scene-studies',
     title: 'Scene Studies',
-    category: 'Illustration',
     description: 'Standalone scenes exploring different finishes — a textured summer beach painting and a pixel-art film study.',
-    tone: '#e84d3d',
     images: ['scene-beach', 'scene-pixel'],
   }),
-  define({
-    slug: 'mexico-bedroom',
-    title: 'Mexico',
-    category: 'Illustration',
-    description: 'A colorful narrative bedroom illustration built around culture, pattern and collected details.',
-    tone: '#f2a33a',
-    images: ['narrative-mexico'],
+  backgrounds: define({
+    slug: 'background-art',
+    title: 'Background Art',
+    description: 'Environment design and background painting for imagined worlds — light, depth and atmosphere that leave room for characters.',
+    images: ['bg-temple', 'bg-interior'],
   }),
+  storyboards: define({
+    slug: 'storyboards-concepts',
+    title: 'Storyboards & Composition Studies',
+    description: 'Composition and mood studies — mostly in black and white — exploring space, tension and visual narrative.',
+    images: ['story-spooky', 'bg-lighthouse', 'bg-room'],
+  }),
+}
+
+export type WorkSlug = 'social-media' | 'sahl-mascot' | 'picture-book' | 'illustration' | 'visual-development'
+
+/** A top-level category of work — one card on the homepage, one page under /work/. */
+export type Work = {
+  slug: WorkSlug
+  title: string
+  discipline: string
+  /** One line for the homepage card. */
+  summary: string
+  /** Page introduction. */
+  intro: string
+  meta: { label: string; value: string }[]
+  tags: string[]
+  /** One to three pieces composed into the card and page cover. */
+  cover: Media[]
+  groups: Project[]
+}
+
+const covers = (...keys: MediaKey[]) => keys.map(media)
+
+/** Ordered by priority: commercial graphic design first, then character design, then illustration. */
+export const works: Work[] = [
+  {
+    slug: 'social-media',
+    title: 'Social Media & Campaigns',
+    discipline: 'Graphic design',
+    summary: 'Campaigns, product launches and always-on content for fintech, tech, banking and FMCG brands.',
+    intro: 'Social media design, campaign visuals and advertising key visuals — built for the feed, in Arabic and English.',
+    meta: [
+      { label: 'Clients', value: 'Sahl · Xpark × Infinix · Banque Misr · Almarai · Jira Market' },
+      { label: 'Discipline', value: 'Social media & advertising design' },
+      { label: 'Role', value: 'Graphic designer' },
+    ],
+    tags: ['Social media design', 'Campaign visuals', 'Product launch posts', 'Mascot-led content', 'Arabic typography', 'Photo compositing', 'Ad creatives'],
+    cover: covers('sahl-post-app', 'xpark-zero-x-astronaut', 'ad-banque-misr'),
+    groups: [projects.sahlSocial, projects.xpark, projects.advertising],
+  },
+  {
+    slug: 'sahl-mascot',
+    title: 'Budz — Sahl’s Mascot',
+    discipline: 'Character & mascot design',
+    summary: 'From the first sketch to a model sheet and a social campaign: designing the mascot for a bill-payment app.',
+    intro: 'Budz is the mascot for Sahl, an Egyptian bill-payment app. This is the journey from first sketches to a production-ready character — and into the brand’s social feed.',
+    meta: [
+      { label: 'Client', value: 'Sahl' },
+      { label: 'Discipline', value: 'Character & mascot design' },
+      { label: 'Deliverables', value: 'Exploration sketches · Character development · Model sheet · Social applications' },
+    ],
+    tags: ['Mascot design', 'Character development', 'Model sheet', 'Brand character', 'Social applications'],
+    cover: covers('sahl-sketch-fennec', 'sahl-palette-blue', 'sahl-budz-final'),
+    groups: [],
+  },
+  {
+    slug: 'picture-book',
+    title: 'The Marzouk Family on Holiday',
+    discipline: 'Picture book illustration',
+    summary: 'Cover, interior spreads and print for an Arabic children’s picture book.',
+    intro: projects.marzouk.description,
+    meta: [
+      { label: 'Format', value: 'Arabic children’s picture book' },
+      { label: 'Discipline', value: 'Picture book illustration' },
+      { label: 'Deliverables', value: 'Cover · Interior spreads · Print mockups' },
+    ],
+    tags: ['Picture book', 'Children’s illustration', 'Sequential storytelling', 'Cover design'],
+    cover: covers('marzouk-cover'),
+    groups: [projects.marzoukPrint],
+  },
+  {
+    slug: 'illustration',
+    title: 'Illustration',
+    discipline: 'Illustration',
+    summary: 'Characters, portraits, landscapes and narrative scenes — painterly and flat.',
+    intro: 'Character studies, portraits, landscapes and narrative scenes — from loose painterly brushwork to clean flat vector, including work for Google and YouTube.',
+    meta: [
+      { label: 'Discipline', value: 'Digital illustration' },
+      { label: 'Selected client', value: 'Google & YouTube, via TechyTypes Egypt' },
+      { label: 'Range', value: 'Painterly · Flat vector · Textured · Pixel art' },
+    ],
+    tags: ['Character design', 'Portraits', 'Landscapes', 'Editorial scenes', 'Vector illustration'],
+    cover: covers('portrait-chess', 'mermaid', 'character-jam'),
+    groups: [
+      projects.characterStudies,
+      projects.mermaid,
+      projects.portraits,
+      projects.googleYoutube,
+      projects.narrative,
+      projects.musicStage,
+      projects.landscapes,
+      projects.scenes,
+    ],
+  },
+  {
+    slug: 'visual-development',
+    title: 'Visual Development',
+    discipline: 'Background art & storyboards',
+    summary: 'Environment design, background painting and composition studies.',
+    intro: 'Background art and visual development for imagined worlds, and the composition studies behind them.',
+    meta: [
+      { label: 'Discipline', value: 'Background art · Visual development' },
+      { label: 'Focus', value: 'Space, light and staging for story' },
+    ],
+    tags: ['Background art', 'Environment design', 'Storyboards', 'Composition studies'],
+    cover: covers('bg-temple'),
+    groups: [projects.backgrounds, projects.storyboards],
+  },
 ]
 
-export const categories = ['All', 'Picture Books', 'Illustration', 'Character Design', 'Storyboards / Concept Art', 'Campaigns', 'Graphic Design', 'Motion & Animation'] as const
+export function getWork(slug: string) {
+  return works.find((work) => work.slug === slug)
+}
 
-export type CategoryFilter = (typeof categories)[number]
+export function nextWork(slug: WorkSlug) {
+  const index = works.findIndex((work) => work.slug === slug)
+  return works[(index + 1) % works.length]
+}
 
-export function getProject(slug: string) {
-  return projects.find((project) => project.slug === slug)
+export const workHref = (slug: WorkSlug) => `/work/${slug}/`
+
+/** Every piece shown on a work page, in display order. */
+export const pieceCount = (work: Work) => (work.slug === 'sahl-mascot' ? mascotPieceCount : new Set(work.groups.flatMap((group) => group.images.map((image) => image.key))).size + (work.slug === 'picture-book' ? bookSpreads.length : 0))
+
+
+/** Old overlay links (#project/<slug>) now resolve to the page that holds that work. */
+export const legacyRoutes: Record<string, WorkSlug> = {
+  'marzouk-family': 'picture-book',
+  'egyptian-mermaid': 'illustration',
+  'xpark-infinix': 'social-media',
+  'atmospheric-landscapes': 'illustration',
+  'character-narrative': 'illustration',
+  'character-studies': 'illustration',
+  'background-art': 'visual-development',
+  'painted-portraits': 'illustration',
+  'google-youtube': 'illustration',
+  'music-stage': 'illustration',
+  'advertising-visuals': 'social-media',
+  'storyboards-concepts': 'visual-development',
+  'scene-studies': 'illustration',
+  'mexico-bedroom': 'illustration',
 }
 
 export const motionVideo = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/fatma%20elqady_07v02-qXeuJyJxqdrqqvDSmihOg9rz1MvUPw.mp4'
@@ -191,22 +291,19 @@ export const bookSpreads: { key: MediaKey; caption: string }[] = [
   { key: 'marzouk-spread-5', caption: 'At sunset, a quiet word: next time, ask a grown-up for help.' },
 ]
 
-/** Curated, colourful pieces that populate the hero collage and cursor trail. */
-export const heroArtwork: { key: MediaKey; slug: string }[] = [
-  { key: 'mermaid', slug: 'egyptian-mermaid' },
-  { key: 'marzouk-spread-3', slug: 'marzouk-family' },
-  { key: 'character-jam', slug: 'character-studies' },
-  { key: 'landscape-marsh', slug: 'atmospheric-landscapes' },
-  { key: 'bg-temple', slug: 'background-art' },
-  { key: 'portrait-koi', slug: 'painted-portraits' },
-  { key: 'music-textured', slug: 'music-stage' },
-  { key: 'narrative-bedroom', slug: 'character-narrative' },
-  { key: 'xpark-zero-x-astronaut', slug: 'xpark-infinix' },
-  { key: 'balcony', slug: 'google-youtube' },
-  { key: 'scene-beach', slug: 'scene-studies' },
-  { key: 'narrative-mexico', slug: 'mexico-bedroom' },
-  { key: 'character-circle', slug: 'character-studies' },
-  { key: 'landscape-dunes', slug: 'atmospheric-landscapes' },
-  { key: 'narrative-purple', slug: 'character-narrative' },
-  { key: 'portrait-chess', slug: 'painted-portraits' },
+/**
+ * Commercial graphic-design pieces only — these populate the hero, so the first impression is
+ * Fatma as a senior graphic designer. Illustration lives in its own category.
+ */
+export const heroArtwork: { key: MediaKey; work: WorkSlug; label: string }[] = [
+  { key: 'sahl-post-app', work: 'social-media', label: 'Sahl social campaign' },
+  { key: 'xpark-zero-x-astronaut', work: 'social-media', label: 'Xpark × Infinix launch' },
+  { key: 'ad-banque-misr', work: 'social-media', label: 'Banque Misr key visual' },
+  { key: 'sahl-post-orange', work: 'social-media', label: 'Sahl social campaign' },
+  { key: 'xpark-note-11', work: 'social-media', label: 'Xpark × Infinix launch' },
+  { key: 'ad-almarai', work: 'social-media', label: 'Almarai key visual' },
+  { key: 'sahl-post-electricity', work: 'social-media', label: 'Sahl social campaign' },
+  { key: 'xpark-hot-11', work: 'social-media', label: 'Xpark × Infinix launch' },
+  { key: 'sahl-post-university', work: 'social-media', label: 'Sahl social campaign' },
+  { key: 'xpark-zero-x-dress', work: 'social-media', label: 'Xpark × Infinix launch' },
 ]

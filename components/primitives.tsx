@@ -55,27 +55,6 @@ export function MaskLines({ lines, id, className = '', as = 'p', delay = 0, imme
   )
 }
 
-export function Marquee({ items, className = '', reverse = false }: { items: string[]; className?: string; reverse?: boolean }) {
-  const row = (hidden: boolean) => (
-    <div className="marquee-row" aria-hidden={hidden || undefined}>
-      {items.map((item) => (
-        <span key={item}>
-          {item}
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z" /></svg>
-        </span>
-      ))}
-    </div>
-  )
-  return (
-    <div className={`marquee ${reverse ? 'is-reverse' : ''} ${className}`}>
-      <div className="marquee-track">
-        {row(false)}
-        {row(true)}
-      </div>
-    </div>
-  )
-}
-
 export function SectionLabel({ index, label, right }: { index: string; label: string; right: string }) {
   return (
     <div className="section-label">

@@ -1,18 +1,21 @@
 'use client'
 
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { media } from '@/lib/media'
-import { bookSpreads, getProject } from '@/lib/projects'
-import { ArtImage, MaskLines, SectionLabel } from './primitives'
+import { bookSpreads } from '@/lib/projects'
+import { useLightbox } from './gallery'
+import { ArtImage, SectionLabel } from './primitives'
 
-const book = getProject('marzouk-family')!
+const spreads = bookSpreads.map((spread) => ({ ...spread, image: media(spread.key) }))
 
-export function BookFeature({ onOpen }: { onOpen: (slug: string) => void }) {
+/** Spreads in reading order. On wide screens the section pins and vertical scroll turns the pages. */
+export function BookFeature() {
   const section = useRef<HTMLElement>(null)
   const track = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
+  const open = useLightbox()
   const [pinned, setPinned] = useState(false)
   const [distance, setDistance] = useState(0)
 
@@ -39,43 +42,42 @@ export function BookFeature({ onOpen }: { onOpen: (slug: string) => void }) {
   return (
     <section
       ref={section}
-      id="featured"
       className={`book-feature ${pinned ? 'is-pinned' : ''}`}
       style={pinned ? { height: `calc(100svh + ${distance}px)` } : undefined}
-      aria-labelledby="book-title"
+      aria-labelledby="book-spreads-title"
     >
       <div className="book-sticky">
         <div className="book-head page-gutter">
-          <SectionLabel index="01" label="Featured — picture book" right={pinned ? 'Scroll to turn the pages' : 'Swipe the spreads'} />
+          <SectionLabel index="01" label="Cover & interior spreads" right={pinned ? 'Scroll to turn the pages' : 'Swipe the spreads'} />
         </div>
         <motion.div ref={track} className="book-track" style={{ x }}>
           <div className="book-intro">
             <p className="book-arabic" lang="ar" dir="rtl">عائلة مرزوق في المصيف</p>
-            <MaskLines as="h2" id="book-title" className="book-title" lines={['The Marzouk', <>Family <em>on holiday</em></>]} />
-            <p className="book-description">{book.description}</p>
-            <button type="button" className="pill-button" onClick={() => onOpen(book.slug)} data-cursor="Open">
-              Open the book <ArrowUpRight aria-hidden="true" />
-            </button>
+            <h2 id="book-spreads-title" className="book-title">Read the book</h2>
+            <p className="book-description">The cover and five spreads in reading order, each with an English gloss of the Arabic text.</p>
           </div>
-          {bookSpreads.map((spread, index) => {
-            const image = media(spread.key)
-            return (
-              <figure className="book-spread" key={spread.key} style={{ '--ratio': image.ratio } as React.CSSProperties}>
-                <button type="button" className="book-spread-frame" onClick={() => onOpen(book.slug)} data-cursor="View" aria-label={`Open picture book — ${spread.caption}`}>
-                  <ArtImage image={image} alt={`The Marzouk Family on Holiday — ${spread.caption}`} sizes="(min-width: 900px) 110vh, 88vw" />
-                </button>
-                <figcaption>
-                  <span>{String(index).padStart(2, '0')}</span>
-                  {spread.caption}
-                </figcaption>
-              </figure>
-            )
-          })}
+          {spreads.map((spread, index) => (
+            <figure className="book-spread" key={spread.key} style={{ '--ratio': spread.image.ratio } as React.CSSProperties}>
+              <button
+                type="button"
+                className="book-spread-frame"
+                onClick={() => open(spreads.map((item) => item.image), index, 'The Marzouk Family on Holiday')}
+                data-cursor="View"
+                aria-label={`View full screen — ${spread.caption}`}
+              >
+                <ArtImage image={spread.image} alt={`The Marzouk Family on Holiday — ${spread.caption}`} sizes="(min-width: 900px) 110vh, 88vw" eager={index === 0} />
+              </button>
+              <figcaption>
+                <span>{String(index).padStart(2, '0')}</span>
+                {spread.caption}
+              </figcaption>
+            </figure>
+          ))}
           <div className="book-outro">
-            <ArtImage image={media('marzouk-mockup-portrait')} alt="Printed cover mockup of The Marzouk Family on Holiday" sizes="(min-width: 900px) 40vw, 80vw" />
-            <button type="button" className="pill-button" onClick={() => onOpen(book.slug)} data-cursor="Open">
-              Cover, spreads &amp; print mockups <ArrowUpRight aria-hidden="true" />
-            </button>
+            <ArtImage image={media('marzouk-mockup-portrait')} alt="Printed cover mockup of The Marzouk Family on Holiday" sizes="(min-width: 900px) 30vw, 70vw" />
+            <a className="text-link" href="#group-marzouk-print">
+              Cover &amp; print mockups <ArrowDown aria-hidden="true" />
+            </a>
           </div>
         </motion.div>
         {pinned && (

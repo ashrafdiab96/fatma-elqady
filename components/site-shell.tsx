@@ -2,7 +2,10 @@
 
 import { AnimatePresence, MotionConfig, motion, useMotionValue, useReducedMotion, useScroll, useSpring } from 'framer-motion'
 import { ArrowUpRight, Menu, X } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { email } from '@/lib/site'
 
 const links = [
   { id: 'work', label: 'Work' },
@@ -10,20 +13,30 @@ const links = [
   { id: 'about', label: 'About' },
 ]
 
+const MotionLink = motion.create(Link)
+
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
-  const [current, setCurrent] = useState<string | null>(null)
+  const [section, setSection] = useState<string | null>(null)
+  const pathname = usePathname()
+  const onWorkPage = pathname?.startsWith('/work')
+  const current = onWorkPage ? 'work' : section
   const { scrollYProgress } = useScroll()
   const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 40 })
 
+  // Highlight the homepage section in view. Work pages always highlight Work.
   useEffect(() => {
+    setSection(null)
+    if (onWorkPage) return
     const observer = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => entry.isIntersecting && setCurrent(entry.target.id)),
+      (entries) => entries.forEach((entry) => entry.isIntersecting && setSection(entry.target.id)),
       { rootMargin: '-45% 0px -50% 0px' },
     )
-    ;['top', 'featured', 'work', 'motion', 'about', 'contact'].forEach((id) => { const element = document.getElementById(id); if (element) observer.observe(element) })
+    ;['top', 'intro', 'work', 'motion', 'about', 'contact'].forEach((id) => { const element = document.getElementById(id); if (element) observer.observe(element) })
     return () => observer.disconnect()
-  }, [])
+  }, [onWorkPage])
+
+  useEffect(() => setOpen(false), [pathname])
 
   useEffect(() => {
     if (!open) return
@@ -36,17 +49,17 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
     <MotionConfig reducedMotion="user">
     <div className="site-shell">
-      <a className="skip-link" href="#work">Skip to work</a>
+      <a className="skip-link" href="#content">Skip to content</a>
       <motion.div className="scroll-progress" style={{ scaleX: progress }} aria-hidden="true" />
       <header className="site-nav">
-        <a className="wordmark" href="#top" aria-label="Fatma Elqady — back to top" onClick={() => setOpen(false)}>
+        <Link className="wordmark" href="/" aria-label="Fatma Elqady — home" onClick={() => setOpen(false)}>
           FATMA<span> / </span>ELQADY
-        </a>
+        </Link>
         <nav className="nav-links" aria-label="Primary navigation">
           {links.map((link) => (
-            <a key={link.id} href={`#${link.id}`} aria-current={current === link.id ? 'location' : undefined}>
+            <Link key={link.id} href={`/#${link.id}`} aria-current={current === link.id ? (onWorkPage ? 'page' : 'location') : undefined}>
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <a className="nav-cta" href="#contact" aria-current={current === 'contact' ? 'location' : undefined}>
@@ -69,9 +82,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             {[...links, { id: 'contact', label: 'Contact' }].map((link, index) => (
-              <motion.a
+              <MotionLink
                 key={link.id}
-                href={`#${link.id}`}
+                href={link.id === 'contact' ? '#contact' : `/#${link.id}`}
                 onClick={() => setOpen(false)}
                 initial={{ y: 40, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -79,9 +92,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
               >
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 {link.label}
-              </motion.a>
+              </MotionLink>
             ))}
-            <p className="mobile-menu-foot">fatmaelkady@gmail.com · Cairo, Egypt</p>
+            <p className="mobile-menu-foot">{email} · Cairo, Egypt</p>
           </motion.nav>
         )}
       </AnimatePresence>

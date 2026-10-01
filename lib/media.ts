@@ -1,5 +1,7 @@
 // Generated from the optimised artwork exports in /public/work.
 // Each entry records the source dimensions (for aspect ratios) and the exported widths.
+import { asset } from './site'
+
 const manifest = {
   "marzouk-cover": { w: 5323, h: 3370, widths: [640, 1280, 2000] },
   "marzouk-spread-1": { w: 5323, h: 3370, widths: [640, 1280, 2000] },
@@ -20,12 +22,6 @@ const manifest = {
   "ad-banque-misr": { w: 1500, h: 1500, widths: [640, 1280, 1500] },
   "ad-almarai": { w: 1200, h: 1200, widths: [640, 1200] },
   "ad-jira-market": { w: 1600, h: 900, widths: [640, 1280, 1600] },
-  "accessorize-title": { w: 1600, h: 900, widths: [640, 1280, 1600] },
-  "accessorize-1": { w: 622, h: 622, widths: [622] },
-  "accessorize-2": { w: 622, h: 622, widths: [622] },
-  "accessorize-3": { w: 622, h: 622, widths: [622] },
-  "accessorize-4": { w: 622, h: 622, widths: [622] },
-  "accessorize-5": { w: 622, h: 622, widths: [622] },
   "mermaid": { w: 4232, h: 4134, widths: [640, 1280, 2000] },
   "mermaid-clean": { w: 4232, h: 4134, widths: [640, 1280, 2000] },
   "character-jam": { w: 2480, h: 3508, widths: [640, 1280, 2000] },
@@ -53,41 +49,71 @@ const manifest = {
   "music-flat": { w: 1600, h: 900, widths: [640, 1280, 1600] },
   "scene-beach": { w: 3508, h: 2480, widths: [640, 1280, 2000] },
   "scene-pixel": { w: 8001, h: 4500, widths: [640, 1280, 2000] },
+  // Sahl — mascot development (sketch → final) and social applications.
+  "sahl-sketch-human-1": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-sketch-human-2": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-sketch-human-3": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-sketch-human-4": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-sketch-human-5": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-sketch-monkey": { w: 1080, h: 1860, widths: [640, 1080] },
+  "sahl-sketch-rabbit": { w: 1080, h: 1860, widths: [640, 1080] },
+  "sahl-sketch-fennec": { w: 1080, h: 1860, widths: [640, 1080] },
+  "sahl-fennec-colour": { w: 1080, h: 1860, widths: [640, 1080] },
+  "sahl-helmet-sketch-1": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-helmet-sketch-2": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-helmet-sketch-3": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-tv-sketch-1": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-tv-sketch-2": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-tv-sketch-3": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-helmet-visor": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-helmet-laugh-1": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-helmet-laugh-2": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-helmet-face": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-helmet-blue": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-neon-1": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-neon-2": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-neon-3": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-neon-4": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-neon-5": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-neon-6": { w: 1080, h: 1920, widths: [640, 1080] },
+  "sahl-palette-grey": { w: 2553, h: 3923, widths: [640, 1280, 2000] },
+  "sahl-palette-blue": { w: 2553, h: 3923, widths: [640, 1280, 2000] },
+  "sahl-palette-white-blue": { w: 2553, h: 3923, widths: [640, 1280, 2000] },
+  "sahl-palette-orange": { w: 2553, h: 3923, widths: [640, 1280, 2000] },
+  "sahl-palette-teal": { w: 2553, h: 3923, widths: [640, 1280, 2000] },
+  "sahl-palette-white": { w: 2553, h: 3923, widths: [640, 1280, 2000] },
+  "sahl-budz-final": { w: 1080, h: 1350, widths: [640, 1080] },
+  "sahl-model-sheet": { w: 1600, h: 900, widths: [640, 1280, 1600] },
+  "sahl-post-budz-id": { w: 1080, h: 1350, widths: [640, 1080] },
+  "sahl-post-electricity": { w: 1080, h: 1350, widths: [640, 1080] },
+  "sahl-story-electricity": { w: 900, h: 1600, widths: [640, 900] },
+  "sahl-post-app": { w: 1080, h: 1350, widths: [640, 1080] },
+  "sahl-post-internet": { w: 1080, h: 1350, widths: [640, 1080] },
+  "sahl-post-gas-water": { w: 1080, h: 1350, widths: [640, 1080] },
+  "sahl-post-university": { w: 1080, h: 1350, widths: [640, 1080] },
+  "sahl-post-orange": { w: 1080, h: 1080, widths: [640, 1080] },
 } as const
 
 export type MediaKey = keyof typeof manifest
 
 export type Media = { key: MediaKey; src: string; srcSet: string; width: number; height: number; ratio: number }
 
-const BASE_PATH =
-  process.env.NODE_ENV === "production"
-    ? "/fatma-elqady"
-    : "";
+const file = (key: MediaKey, width: number) => asset(`/work/${key}-${width}.webp`)
 
 export function media(key: MediaKey): Media {
-  const { w, h, widths } = manifest[key];
-
-  const srcSet = widths
-    .map(
-      (width) =>
-        `${BASE_PATH}/work/${key}-${width}.webp ${width}w`
-    )
-    .join(", ");
-
-  const mid =
-    widths.find((width) => width >= 1280) ??
-    widths[widths.length - 1];
-
+  const { w, h, widths } = manifest[key]
+  const mid = widths.find((width) => width >= 1280) ?? widths[widths.length - 1]
   return {
     key,
-    src: `${BASE_PATH}/work/${key}-${mid}.webp`,
-    srcSet,
+    src: file(key, mid),
+    srcSet: widths.map((width) => `${file(key, width)} ${width}w`).join(', '),
     width: w,
     height: h,
     ratio: w / h,
-  };
+  }
 }
 
+/** The smallest export — for small previews that do not need a srcSet. */
 export function thumb(key: MediaKey) {
-  return `${BASE_PATH}/work/${key}-${manifest[key].widths[0]}.webp`;
+  return file(key, manifest[key].widths[0])
 }
