@@ -1,3 +1,4 @@
+import { composeSequences, type EditorialSequence, type EditorialSequenceInput } from './editorial'
 import { mascotPieceCount } from './mascot'
 import { media, type Media, type MediaKey } from './media'
 
@@ -8,33 +9,63 @@ export type Project = {
   description: string
   context?: string
   images: Media[]
+  /** An art-directed composition; when present it replaces the justified gallery and supplies `images`. */
+  sequences?: EditorialSequence[]
   /** Another work page that tells more of this story. */
   related?: { work: WorkSlug; label: string }
 }
 
-type ProjectInput = Omit<Project, 'images'> & { images: MediaKey[] }
+type ProjectInput = Omit<Project, 'images' | 'sequences'> & { images: MediaKey[] }
 
 const define = ({ images, ...project }: ProjectInput): Project => ({ ...project, images: images.map(media) })
 
+/** A project laid out as an editorial composition; its images (and lightbox order) follow the composition. */
+const compose = (project: Omit<Project, 'images' | 'sequences'>, input: EditorialSequenceInput[]): Project => ({ ...project, ...composeSequences(input) })
+
 export const projects = {
-  sahlSocial: define({
-    slug: 'sahl',
-    title: 'Sahl',
-    context: 'Bill-payment app · Social content',
-    related: { work: 'sahl-mascot', label: 'How Budz was designed' },
-    description:
-      'Always-on social content for Sahl, an Egyptian bill-payment app. Each service — electricity, internet, gas and water, university fees, mobile recharge — gets a post in bold Arabic type on Sahl’s signature blue, most of them fronted by the brand’s mascot, Budz.',
-    images: [
-      'sahl-post-budz-id',
-      'sahl-post-electricity',
-      'sahl-post-app',
-      'sahl-post-internet',
-      'sahl-post-gas-water',
-      'sahl-post-university',
-      'sahl-story-electricity',
-      'sahl-post-orange',
+  sahlSocial: compose(
+    {
+      slug: 'sahl',
+      title: 'Sahl',
+      context: 'Social Media & Digital Campaigns',
+      related: { work: 'sahl-mascot', label: 'How Budz was designed' },
+      description:
+        'A selection of social media and campaign creatives developed for Sahl, an Egyptian bill-payment app — spanning product communication, promotional offers, educational content and engagement-driven campaigns, in bold Arabic type and often fronted by the brand’s mascot, Budz.',
+    },
+    [
+      {
+        label: 'Campaign key visuals',
+        note: 'Installment partners · Yacht Club of Egypt · a three-part World Cup series',
+        rows: [
+          [{ feature: 'sahl-installments' }, { stack: [['sahl-yacht-club'], ['sahl-ufo']] }],
+          ['sahl-cup-3', 'sahl-cup-2', 'sahl-cup-1'],
+        ],
+      },
+      {
+        label: 'Everyday moments',
+        note: 'Photography-led posts for bills, subscriptions and summer',
+        rows: [[{ stack: [['sahl-electricity-home'], ['sahl-bein']] }, { feature: 'sahl-summer' }]],
+      },
+      {
+        label: 'Service communication',
+        note: 'A story series on speed, security and one-tap payment, and service explainers',
+        rows: [
+          [{ feature: 'sahl-university-3d' }, 'sahl-story-fast', 'sahl-story-secure', 'sahl-story-offline'],
+          ['sahl-post-app', 'sahl-bill-paid', 'sahl-post-orange'],
+        ],
+      },
+      {
+        label: 'Offers & cashback',
+        note: 'Seasonal and first-payment promotions',
+        rows: [[{ stack: [['sahl-cashback-university'], ['sahl-cashback-gas']] }, { feature: 'sahl-ramadan-cashback' }]],
+      },
+      {
+        label: 'Engagement & gaming',
+        note: '“Play with Budz” riddles and game top-ups',
+        rows: [['sahl-riddle', 'sahl-guess-film', 'sahl-games-pixel']],
+      },
     ],
-  }),
+  ),
   xpark: define({
     slug: 'xpark-infinix',
     title: 'Xpark × Infinix',
@@ -42,6 +73,27 @@ export const projects = {
     description: 'Social product posts for Infinix smartphones — Zero X Pro, Note 11, Note 10 and Hot 11 — each built around a scene breaking out of the device screen.',
     images: ['xpark-zero-x-astronaut', 'xpark-zero-x-dress', 'xpark-note-11', 'xpark-note-10', 'xpark-hot-11'],
   }),
+  klivvr: compose(
+    {
+      slug: 'klivvr',
+      title: 'Klivvr',
+      context: 'Fintech app · Social posts',
+      description: 'Social posts for Klivvr’s cards and K Points rewards — hand-drawn characters, app UI and glass panels set against the brand’s violet and cyan.',
+    },
+    [{ rows: [['klivvr-groceries', 'klivvr-simple', 'klivvr-3x', 'klivvr-products']] }],
+  ),
+  fmcg: compose(
+    {
+      slug: 'beity-bonz',
+      title: 'Beity & Bonz',
+      context: 'Food & beverage · Product posts',
+      description: 'Product-led posts for two food brands: Beity’s juice range, staged as cut-paper, splash and character concepts, and Bonz snacks, from flavour-burst key visuals to a match-day post.',
+    },
+    [
+      { label: 'Beity — juices', rows: [['beity-mango', 'beity-orange', 'beity-pineapple']] },
+      { label: 'Bonz — snacks', rows: [[{ feature: 'bonz-range' }, { stack: [['bonz-hoot'], ['bonz-stadium']] }]] },
+    ],
+  ),
   advertising: define({
     slug: 'advertising-visuals',
     title: 'Advertising Key Visuals',
@@ -168,13 +220,13 @@ export const works: Work[] = [
     summary: 'Campaigns, product launches and always-on content for fintech, tech, banking and FMCG brands.',
     intro: 'Social media design, campaign visuals and advertising key visuals — built for the feed, in Arabic and English.',
     meta: [
-      { label: 'Clients', value: 'Sahl · Xpark × Infinix · Banque Misr · Almarai · Jira Market' },
+      { label: 'Brands', value: 'Sahl · Klivvr · Xpark × Infinix · Beity · Bonz · Banque Misr · Almarai · Jira Market' },
       { label: 'Discipline', value: 'Social media & advertising design' },
       { label: 'Role', value: 'Graphic designer' },
     ],
-    tags: ['Social media design', 'Campaign visuals', 'Product launch posts', 'Mascot-led content', 'Arabic typography', 'Photo compositing', 'Ad creatives'],
+    tags: ['Social media design', 'Campaign visuals', 'Product launch posts', 'Mascot-led content', 'Promotional offers', 'Engagement posts', 'Arabic typography', 'Photo compositing', 'Ad creatives'],
     cover: covers('sahl-post-app', 'xpark-zero-x-astronaut', 'ad-banque-misr'),
-    groups: [projects.sahlSocial, projects.xpark, projects.advertising],
+    groups: [projects.sahlSocial, projects.xpark, projects.klivvr, projects.fmcg, projects.advertising],
   },
   {
     slug: 'sahl-mascot',

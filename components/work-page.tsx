@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { nextWork, pieceCount, workHref, works, type Project, type Work } from '@/lib/projects'
 import { ContactSection } from './about-contact'
 import { BookFeature } from './book-feature'
-import { JustifiedGallery, LightboxProvider } from './gallery'
+import { EditorialGallery, JustifiedGallery, LightboxProvider } from './gallery'
 import { MascotCase } from './mascot-case'
 import { MaskLines, Reveal } from './primitives'
 import { ProcessCompare } from './process-compare'
@@ -98,6 +98,8 @@ function CaseGroup({ group, index, total }: { group: Project; index: number; tot
           <ProcessCompare />
           <p className="case-compare-note">Drag across the piece to compare the flat vector version with the final grain-and-gradient render.</p>
         </div>
+      ) : group.sequences ? (
+        <EditorialGallery sequences={group.sequences} images={group.images} title={group.title} />
       ) : (
         <JustifiedGallery images={group.images} title={group.title} row={portrait ? 340 : 280} mobileRow={portrait ? 190 : 140} />
       )}

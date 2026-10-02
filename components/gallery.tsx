@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, X } from 'lucide-react'
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import type { EditorialSequence, PlacedPiece } from '@/lib/editorial'
 import type { Media } from '@/lib/media'
 import { ArtImage, ease } from './primitives'
 
@@ -98,6 +99,61 @@ export function JustifiedGallery({ images, title, row = 300, mobileRow = 170, si
       {justify(images, width, width < 700 ? mobileRow : row).map((line) => (
         <div key={line.images[0].key} className="jgrid-row" style={{ height: line.height }}>
           {line.images.map((image) => item(image, index++, { width: image.ratio * line.height }))}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** An authored, art-directed composition (see lib/editorial.ts). Pure CSS sizing — nothing shifts as images load. */
+export function EditorialGallery({ sequences, images, title }: { sequences: EditorialSequence[]; images: Media[]; title: string }) {
+  const open = useLightbox()
+  const reduce = useReducedMotion()
+
+  const piece = ({ image, index, width, mobileWidth, sizes }: PlacedPiece, order: number) => (
+    <motion.button
+      key={image.key}
+      type="button"
+      className="edit-item"
+      style={{ '--w': width, '--wm': mobileWidth, '--r': image.ratio } as CSSProperties}
+      onClick={() => open(images, index, title)}
+      aria-label={`View ${title}, ${index + 1} of ${images.length}, full screen`}
+      data-cursor="View"
+      initial={reduce ? false : { opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.8, ease, delay: order * 0.06 }}
+    >
+      <ArtImage image={image} alt="" sizes={sizes} />
+    </motion.button>
+  )
+
+  return (
+    <div className="edit-gallery">
+      {sequences.map((sequence, sequenceIndex) => (
+        <div key={sequenceIndex} className="edit-sequence">
+          {sequence.label && (
+            <p className="edit-label">
+              <span>{sequence.label}</span>
+              {sequence.note && <span>{sequence.note}</span>}
+            </p>
+          )}
+          {sequence.rows.map((row, rowIndex) => {
+            let order = 0
+            return (
+              <div key={rowIndex} className="edit-row">
+                {row.map((cell) =>
+                  cell.kind === 'piece' ? piece(cell.piece, order++) : (
+                    <div key={cell.rows[0][0].image.key} className="edit-stack" style={{ '--w': cell.width } as CSSProperties}>
+                      {cell.rows.map((line) => (
+                        <div key={line[0].image.key} className="edit-stack-row">{line.map((item) => piece(item, order++))}</div>
+                      ))}
+                    </div>
+                  ),
+                )}
+              </div>
+            )
+          })}
         </div>
       ))}
     </div>
