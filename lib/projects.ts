@@ -331,7 +331,6 @@ export const legacyRoutes: Record<string, WorkSlug> = {
   'mexico-bedroom': 'illustration',
 }
 
-export const motionVideo = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/fatma%20elqady_07v02-qXeuJyJxqdrqqvDSmihOg9rz1MvUPw.mp4'
 
 /** Picture book spreads with a short English gloss of the Arabic text printed on each page. */
 export const bookSpreads: { key: MediaKey; caption: string }[] = [

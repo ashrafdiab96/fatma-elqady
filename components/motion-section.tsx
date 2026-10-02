@@ -2,31 +2,57 @@
 
 import { useInView, useReducedMotion } from 'framer-motion'
 import { Maximize2, Pause, Play, Volume2, VolumeX } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { motionVideo } from '@/lib/projects'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { featuredMotion, supportingMotion, type MotionPiece } from '@/lib/motion'
 import { MaskLines, Reveal, SectionLabel } from './primitives'
 
 const format = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`
+const pad = (value: number) => String(value).padStart(2, '0')
+const count = 1 + supportingMotion.length
 
 export function MotionSection() {
   return (
     <section id="motion" className="motion-section page-section" aria-labelledby="motion-title">
-      <SectionLabel index="03" label="Motion & video" right="A growing practice" />
+      <SectionLabel index="03" label="Motion" right="Selected motion work" />
       <div className="motion-layout">
         <div className="motion-heading">
           <MaskLines as="h2" id="motion-title" lines={['Stories', <>that <em>move.</em></>]} />
-          <p className="motion-copy">Alongside design and illustration, Fatma animates and edits: 2D animation, motion graphics and video for social.</p>
-          <p className="motion-caption">Selected motion study<br />Fatma Elqady / 07v02</p>
+          <p className="motion-copy">A selection of motion and video work exploring animated social content, visual storytelling and digital communication.</p>
+          <p className="motion-caption">Motion design · Video<br />{pad(count)} pieces</p>
         </div>
         <Reveal className="motion-player">
-          <VideoPlayer />
+          <MotionFigure piece={featuredMotion} index={0} />
         </Reveal>
+      </div>
+      <div className="motion-pair">
+        {supportingMotion.map((piece, index) => (
+          <Reveal key={piece.key} className="motion-pair-item" delay={index * 0.08} style={{ '--r': piece.ratio } as CSSProperties}>
+            <MotionFigure piece={piece} index={index + 1} />
+          </Reveal>
+        ))}
       </div>
     </section>
   )
 }
 
-function VideoPlayer() {
+function MotionFigure({ piece, index }: { piece: MotionPiece; index: number }) {
+  return (
+    <figure className="motion-figure">
+      <VideoPlayer piece={piece} />
+      <figcaption>
+        <span>{pad(index + 1)}</span>
+        <span>{piece.title}</span>
+        <span>{piece.label}</span>
+      </figcaption>
+    </figure>
+  )
+}
+
+/**
+ * Plays muted while it is on screen and pauses when it leaves, so only what the visitor is looking at
+ * downloads or decodes. Nothing is fetched until then (preload="none"); a poster frame holds the space.
+ */
+function VideoPlayer({ piece }: { piece: MotionPiece }) {
   const wrap = useRef<HTMLDivElement>(null)
   const video = useRef<HTMLVideoElement>(null)
   const reduce = useReducedMotion()
@@ -67,15 +93,18 @@ function VideoPlayer() {
   const progress = time.duration ? (time.current / time.duration) * 100 : 0
 
   return (
-    <div ref={wrap} className={`video-player ${playing ? 'is-playing' : ''}`}>
+    <div ref={wrap} className={`video-player ${playing ? 'is-playing' : ''}`} style={{ '--r': piece.ratio } as CSSProperties}>
       <video
         ref={video}
-        src={`${motionVideo}#t=0.1`}
+        src={piece.src}
+        poster={piece.poster}
+        width={piece.width}
+        height={piece.height}
         muted
         loop
         playsInline
-        preload="metadata"
-        aria-label="Fatma Elqady motion design video"
+        preload="none"
+        aria-label={`${piece.title} — ${piece.label}`}
         onClick={toggle}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
@@ -87,8 +116,8 @@ function VideoPlayer() {
       </button>
       <div className="video-controls">
         <button type="button" onClick={toggle} aria-label={playing ? 'Pause video' : 'Play video'}>{playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}</button>
-        <span className="video-time">{format(time.current)}</span>
-        <div className="video-scrub" style={{ '--progress': `${progress}%` } as React.CSSProperties}>
+        {time.duration > 0 && <span className="video-time">{format(time.current)}</span>}
+        <div className="video-scrub" style={{ '--progress': `${progress}%` } as CSSProperties}>
           <input
             type="range"
             min={0}
@@ -99,7 +128,7 @@ function VideoPlayer() {
             aria-label="Seek video"
           />
         </div>
-        <span className="video-time">{format(time.duration)}</span>
+        {time.duration > 0 && <span className="video-time">{format(time.duration)}</span>}
         <button type="button" onClick={toggleMute} aria-label={muted ? 'Unmute video' : 'Mute video'}>{muted ? <VolumeX aria-hidden="true" /> : <Volume2 aria-hidden="true" />}</button>
         <button type="button" onClick={fullscreen} aria-label="Play video fullscreen"><Maximize2 aria-hidden="true" /></button>
       </div>

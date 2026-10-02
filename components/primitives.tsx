@@ -25,9 +25,9 @@ export function ArtImage({ image, alt, sizes, eager = false, className = '', sty
   )
 }
 
-export function Reveal({ children, className = '', delay = 0, y = 34 }: { children: ReactNode; className?: string; delay?: number; y?: number }) {
+export function Reveal({ children, className = '', delay = 0, y = 34, style }: { children: ReactNode; className?: string; delay?: number; y?: number; style?: CSSProperties }) {
   return (
-    <motion.div className={className} initial={{ opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.8, ease, delay }}>
+    <motion.div className={className} style={style} initial={{ opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.8, ease, delay }}>
       {children}
     </motion.div>
   )
