@@ -37,7 +37,7 @@ export const projects = {
         label: 'Campaign key visuals',
         note: 'Installment partners · Yacht Club of Egypt · a three-part World Cup series',
         rows: [
-          [{ feature: 'sahl-installments' }, { stack: [['sahl-yacht-club'], ['sahl-ufo']] }],
+          [{ feature: 'sahl-installments' }, { stack: [['sahl-yacht-club'], ['sahl-university-3d']] }],
           ['sahl-cup-3', 'sahl-cup-2', 'sahl-cup-1'],
         ],
       },
@@ -50,7 +50,7 @@ export const projects = {
         label: 'Service communication',
         note: 'A story series on speed, security and one-tap payment, and service explainers',
         rows: [
-          [{ feature: 'sahl-university-3d' }, 'sahl-story-fast', 'sahl-story-secure', 'sahl-story-offline'],
+          [{ feature: 'sahl-ufo' }, 'sahl-story-fast', 'sahl-story-secure', 'sahl-story-offline'],
           ['sahl-post-app', 'sahl-bill-paid', 'sahl-post-orange'],
         ],
       },
@@ -239,7 +239,7 @@ export const works: Work[] = [
     ],
     tags: ['Social media design', 'Campaign visuals', 'Product launch posts', 'Mascot-led content', 'Promotional offers', 'Engagement posts', 'Arabic typography', 'Photo compositing', 'Ad creatives'],
     cover: covers('sahl-post-app', 'rawnaq-modest-day', 'klivvr-groceries'),
-    groups: [projects.sahlSocial, projects.rawnaq, projects.xpark, projects.klivvr, projects.fmcg, projects.advertising],
+    groups: [projects.rawnaq, projects.sahlSocial, projects.klivvr, projects.fmcg, projects.advertising, projects.xpark],
   },
   {
     slug: 'sahl-mascot',
