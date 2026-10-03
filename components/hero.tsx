@@ -4,8 +4,8 @@ import { AnimatePresence, motion, useMotionValue, useReducedMotion, useScroll, u
 import { ArrowDown } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
-import { media, thumb } from '@/lib/media'
-import { heroArtwork, workHref } from '@/lib/projects'
+import { media, thumb, type MediaKey } from '@/lib/media'
+import { heroArtwork, trailArtwork, workHref, type HeroArt } from '@/lib/projects'
 import { asset } from '@/lib/site'
 import { MaskLines, ease } from './primitives'
 
@@ -20,10 +20,49 @@ const slots: Slot[] = [
   { x: 66, y: 64, w: 12, depth: 0.85, mobile: { x: 36, y: 26, w: 26 } },
 ]
 
+type TrailPiece = { id: number; key: MediaKey; x: number; y: number; rotate: number }
+
+/** Cursor travel (px) between trail pieces, how long each stays, and how many can be on screen. */
+const TRAIL_STEP = 90
+const TRAIL_LIFE = 1100
+const TRAIL_MAX = 10
+/** Share of trail pieces drawn from the focus brands. */
+const TRAIL_FOCUS = 0.75
+
+const shuffle = <T,>(items: readonly T[]) => {
+  const copy = [...items]
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[copy[i], copy[j]] = [copy[j], copy[i]]
+  }
+  return copy
+}
+
+const preload = (keys: MediaKey[]) => keys.forEach((key) => { const img = new Image(); img.src = thumb(key) })
+
+/** Deals items from a shuffled deck, reshuffling when it runs out and skipping anything in `avoid`. */
+function draw<T>(deck: T[], source: readonly T[], avoid: (item: T) => boolean) {
+  for (let tries = 0; tries < source.length * 2; tries += 1) {
+    if (!deck.length) deck.push(...shuffle(source))
+    const item = deck.pop()!
+    if (!avoid(item)) return item
+  }
+  return deck.pop() ?? source[0]
+}
+
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
   const reduce = useReducedMotion()
-  const [cycle, setCycle] = useState(0)
+  // The wall is dealt on the client so every visit gets a different mix.
+  const [wall, setWall] = useState<HeroArt[] | null>(null)
+  const wallRef = useRef<HeroArt[]>([])
+  const wallDeck = useRef<HeroArt[]>([])
+  const [trail, setTrail] = useState<TrailPiece[]>([])
+  const trailDecks = useRef({ focus: [] as MediaKey[], rest: [] as MediaKey[] })
+  const trailRecent = useRef<MediaKey[]>([])
+  const lastSpawn = useRef<{ x: number; y: number } | null>(null)
+  const trailId = useRef(0)
+  const timers = useRef(new Set<number>())
 
   // Cursor parallax, smoothed with a spring.
   const px = useMotionValue(0)
@@ -39,26 +78,87 @@ export function Hero() {
 
   // The wall slowly swaps work, one slot at a time, so it feels alive without demanding attention.
   useEffect(() => {
+    const onWall = (art: HeroArt) => wallRef.current.some((shown) => shown.key === art.key)
+    if (!wallRef.current.length) {
+      wallRef.current = slots.map(() => draw(wallDeck.current, heroArtwork, onWall))
+      setWall(wallRef.current)
+    }
     if (reduce) return
-    const warm = window.setTimeout(() => heroArtwork.forEach(({ key }) => { const img = new Image(); img.src = thumb(key) }), 1500)
-    const id = window.setInterval(() => setCycle((value) => value + 1), 3400)
-    return () => { window.clearTimeout(warm); window.clearInterval(id) }
+    const warm = window.setTimeout(() => {
+      preload(wallDeck.current.slice(-slots.length).map((art) => art.key))
+      preload([...trailArtwork.focus.slice(0, 4), ...trailArtwork.rest.slice(0, 2)])
+    }, 1500)
+    let tick = 0
+    const id = window.setInterval(() => {
+      const slot = tick++ % slots.length
+      const next = draw(wallDeck.current, heroArtwork, onWall)
+      wallRef.current = wallRef.current.map((art, index) => (index === slot ? next : art))
+      setWall(wallRef.current)
+      preload(wallDeck.current.slice(-1).map((art) => art.key))
+    }, 3400)
+    const pending = timers.current
+    return () => { window.clearTimeout(warm); window.clearInterval(id); pending.forEach(window.clearTimeout); pending.clear() }
   }, [reduce])
+
+  // A trail of work follows the cursor — mostly the focus brands, never what is already on the wall.
+  const spawnTrail = (x: number, y: number) => {
+    const avoid = (key: MediaKey) => trailRecent.current.includes(key) || wallRef.current.some((art) => art.key === key)
+    const pool = Math.random() < TRAIL_FOCUS ? 'focus' : 'rest'
+    const deck = trailDecks.current[pool]
+    const key = draw(deck, trailArtwork[pool], avoid)
+    trailRecent.current = [...trailRecent.current.slice(-(TRAIL_MAX - 1)), key]
+    preload(deck.slice(-2))
+    const id = trailId.current++
+    setTrail((pieces) => [...pieces.slice(-(TRAIL_MAX - 1)), { id, key, x, y, rotate: Math.random() * 10 - 5 }])
+    const timer = window.setTimeout(() => {
+      timers.current.delete(timer)
+      setTrail((pieces) => pieces.filter((piece) => piece.id !== id))
+    }, TRAIL_LIFE)
+    timers.current.add(timer)
+  }
 
   const onPointerMove = (event: React.PointerEvent<HTMLElement>) => {
     if (reduce || event.pointerType === 'touch') return
     const rect = event.currentTarget.getBoundingClientRect()
-    px.set((event.clientX - rect.left) / rect.width - 0.5)
-    py.set((event.clientY - rect.top) / rect.height - 0.5)
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    px.set(x / rect.width - 0.5)
+    py.set(y / rect.height - 0.5)
+    const last = lastSpawn.current
+    if (!last || Math.hypot(x - last.x, y - last.y) > TRAIL_STEP) {
+      lastSpawn.current = { x, y }
+      if (last) spawnTrail(x, y)
+    }
   }
 
   return (
-    <section ref={ref} id="top" className="hero" onPointerMove={onPointerMove} onPointerLeave={() => { px.set(0); py.set(0) }} aria-labelledby="hero-title">
+    <section ref={ref} id="top" className="hero" onPointerMove={onPointerMove} onPointerLeave={() => { px.set(0); py.set(0); lastSpawn.current = null }} aria-labelledby="hero-title">
       <motion.div className="hero-collage" style={{ y: reduce ? 0 : spread }}>
-        {slots.map((slot, index) => (
-          <CollageSlot key={index} slot={slot} index={index} cycle={cycle} sx={sx} sy={sy} reduce={!!reduce} />
+        {wall && slots.map((slot, index) => (
+          <CollageSlot key={index} slot={slot} index={index} art={wall[index]} sx={sx} sy={sy} reduce={!!reduce} />
         ))}
       </motion.div>
+
+      <div className="hero-trail" aria-hidden="true">
+        <AnimatePresence>
+          {trail.map((piece) => {
+            const image = media(piece.key)
+            return (
+              <motion.img
+                key={piece.id}
+                src={thumb(piece.key)}
+                alt=""
+                className="trail-piece"
+                style={{ left: piece.x, top: piece.y, rotate: piece.rotate, aspectRatio: `${image.width} / ${image.height}` }}
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
+                transition={{ duration: 0.45, ease }}
+              />
+            )
+          })}
+        </AnimatePresence>
+      </div>
 
       <div className="hero-top">
         <span className="micro-mark">FE<span> / </span>01</span>
@@ -88,18 +188,15 @@ export function Hero() {
         <a className="hero-scroll" href="#intro" aria-label="Scroll to introduction">
           Scroll <ArrowDown aria-hidden="true" />
         </a>
-        <span className="hero-hint">Social &amp; campaign work shown</span>
+        <span className="hero-hint">Move around for more work</span>
       </div>
     </section>
   )
 }
 
-function CollageSlot({ slot, index, cycle, sx, sy, reduce }: { slot: Slot; index: number; cycle: number; sx: MotionValue<number>; sy: MotionValue<number>; reduce: boolean }) {
+function CollageSlot({ slot, index, art, sx, sy, reduce }: { slot: Slot; index: number; art: HeroArt; sx: MotionValue<number>; sy: MotionValue<number>; reduce: boolean }) {
   const x = useTransform(sx, (value) => value * slot.depth * -60)
   const y = useTransform(sy, (value) => value * slot.depth * -40)
-  // Each slot advances on its own turn: slot i changes when cycle % slots === i.
-  const turns = Math.floor((cycle + slots.length - 1 - index) / slots.length)
-  const art = heroArtwork[(index + turns * slots.length) % heroArtwork.length]
   const image = media(art.key)
   const style = {
     '--x': `${slot.x}%`, '--y': `${slot.y}%`, '--w': `${slot.w}vw`,

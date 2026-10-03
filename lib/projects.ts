@@ -355,19 +355,29 @@ export const bookSpreads: { key: MediaKey; caption: string }[] = [
   { key: 'marzouk-spread-5', caption: 'At sunset, a quiet word: next time, ask a grown-up for help.' },
 ]
 
+export type HeroArt = { key: MediaKey; work: WorkSlug; label: string }
+
+const heroBrands: Record<string, string> = {
+  sahl: 'Sahl social campaign',
+  rawnaq: 'Rawnaq fashion campaign',
+  beity: 'Beity juice post',
+  bonz: 'Bonz snack post',
+  klivvr: 'Klivvr social post',
+}
+const heroProjects = [projects.sahlSocial, projects.rawnaq, projects.fmcg, projects.klivvr]
+
 /**
- * Commercial graphic-design pieces only — these populate the hero, so the first impression is
+ * The hero wall shuffles through portrait pieces from the focus brands, so the first impression is
  * Fatma as a senior graphic designer. Illustration lives in its own category.
  */
-export const heroArtwork: { key: MediaKey; work: WorkSlug; label: string }[] = [
-  { key: 'sahl-post-app', work: 'social-media', label: 'Sahl social campaign' },
-  { key: 'rawnaq-modest-day', work: 'social-media', label: 'Rawnaq fashion campaign' },
-  { key: 'sahl-installments', work: 'social-media', label: 'Sahl campaign key visual' },
-  { key: 'rawnaq-look-brown', work: 'social-media', label: 'Rawnaq fashion campaign' },
-  { key: 'sahl-post-orange', work: 'social-media', label: 'Sahl social campaign' },
-  { key: 'rawnaq-look-hijab', work: 'social-media', label: 'Rawnaq fashion campaign' },
-  { key: 'sahl-summer', work: 'social-media', label: 'Sahl social campaign' },
-  { key: 'rawnaq-look-white', work: 'social-media', label: 'Rawnaq fashion campaign' },
-  { key: 'sahl-ramadan-cashback', work: 'social-media', label: 'Sahl cashback offer' },
-  { key: 'rawnaq-look-seated', work: 'social-media', label: 'Rawnaq fashion campaign' },
-]
+export const heroArtwork: HeroArt[] = heroProjects
+  .flatMap((project) => project.images)
+  .filter((image) => image.ratio < 1.1)
+  .map(({ key }) => ({ key, work: 'social-media', label: heroBrands[key.split('-')[0]] }))
+
+/** The cursor trail draws mostly from the focus brands, with the rest of the portfolio mixed in. */
+const focusKeys = new Set(heroProjects.flatMap((project) => project.images.map((image) => image.key)))
+export const trailArtwork = {
+  focus: [...focusKeys],
+  rest: [...new Set(works.flatMap((work) => work.groups.flatMap((group) => group.images.map((image) => image.key))))].filter((key) => !focusKeys.has(key)),
+}

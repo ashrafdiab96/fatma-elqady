@@ -79,6 +79,8 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var
 .collage-piece:hover img { opacity: 1; }
 .collage-label { position: absolute; left: 0; top: calc(100% + 10px); color: var(--muted); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; opacity: 0; transform: translateY(-4px); transition: opacity 0.4s, transform 0.4s var(--ease); }
 .collage-piece:hover .collage-label, .collage-piece:focus-visible .collage-label { opacity: 1; transform: none; }
+.hero-trail { position: absolute; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; }
+.trail-piece { position: absolute; height: clamp(150px, 27vh, 290px); width: auto; max-width: none; translate: -50% -50%; object-fit: cover; background: var(--panel); box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.9); }
 .hero-top, .hero-bottom { position: relative; z-index: 4; display: flex; justify-content: space-between; align-items: end; gap: 20px; color: var(--muted); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; pointer-events: none; }
 .hero-top span:nth-child(2) { color: var(--off); }
 .hero-top a, .hero-bottom a { pointer-events: auto; }
