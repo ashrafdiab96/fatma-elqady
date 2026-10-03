@@ -144,8 +144,8 @@ export const projects = {
   characterStudies: define({
     slug: 'character-studies',
     title: 'Character Studies',
-    description: 'Personalities built from shape and posture — from a sneaker-wearing jam jar to flat vector figures and painted fashion characters.',
-    images: ['character-jam', 'character-drink', 'character-circle', 'character-flare', 'character-locs'],
+    description: 'Personalities built from shape and posture — from flat vector figures to painted fashion characters.',
+    images: ['character-drink', 'character-circle', 'character-flare', 'character-locs'],
   }),
   mermaid: define({
     slug: 'egyptian-mermaid',
@@ -283,7 +283,7 @@ export const works: Work[] = [
       { label: 'Range', value: 'Painterly · Flat vector · Textured · Pixel art' },
     ],
     tags: ['Character design', 'Portraits', 'Landscapes', 'Editorial scenes', 'Vector illustration'],
-    cover: covers('portrait-chess', 'mermaid', 'character-jam'),
+    cover: covers('portrait-chess', 'mermaid', 'character-drink'),
     groups: [
       projects.characterStudies,
       projects.mermaid,

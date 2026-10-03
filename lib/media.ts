@@ -24,7 +24,6 @@ const manifest = {
   "ad-jira-market": { w: 1600, h: 900, widths: [640, 1280, 1600] },
   "mermaid": { w: 4232, h: 4134, widths: [640, 1280, 2000] },
   "mermaid-clean": { w: 4232, h: 4134, widths: [640, 1280, 2000] },
-  "character-jam": { w: 2480, h: 3508, widths: [640, 1280, 2000] },
   "character-drink": { w: 2668, h: 1904, widths: [640, 1280, 2000] },
   "character-circle": { w: 2114, h: 2577, widths: [640, 1280, 2000] },
   "character-flare": { w: 789, h: 1064, widths: [640, 789] },
