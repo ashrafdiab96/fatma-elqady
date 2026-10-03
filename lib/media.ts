@@ -125,6 +125,13 @@ const manifest = {
   "bonz-hoot": { w: 1080, h: 1350, widths: [640, 1080] },
   "bonz-range": { w: 1080, h: 1350, widths: [640, 1080] },
   "bonz-stadium": { w: 1080, h: 1350, widths: [640, 1080] },
+  // Rawnaq — modest fashion brand identity and campaign posts.
+  "rawnaq-identity": { w: 1448, h: 1086, widths: [640, 1280, 1448] },
+  "rawnaq-modest-day": { w: 1080, h: 1350, widths: [640, 1080] },
+  "rawnaq-look-brown": { w: 1080, h: 1350, widths: [640, 1080] },
+  "rawnaq-look-white": { w: 1080, h: 1350, widths: [640, 1080] },
+  "rawnaq-look-seated": { w: 1122, h: 1402, widths: [640, 1080] },
+  "rawnaq-look-hijab": { w: 1080, h: 1350, widths: [640, 1080] },
 } as const
 
 export type MediaKey = keyof typeof manifest

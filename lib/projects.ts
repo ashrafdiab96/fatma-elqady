@@ -66,6 +66,19 @@ export const projects = {
       },
     ],
   ),
+  rawnaq: compose(
+    {
+      slug: 'rawnaq',
+      title: 'Rawnaq',
+      context: 'Modest fashion · Brand identity & campaign',
+      description:
+        'Identity and launch campaign for رونق (Rawnaq), an Egyptian modest-fashion label — a calligraphic Arabic wordmark paired with a wide serif, an earthy terracotta-and-olive palette, and editorial posts that let the clothes and the type breathe.',
+    },
+    [
+      { label: 'Brand identity', note: 'Wordmark exploration, logo system, palette, pattern and applications', rows: [[{ feature: 'rawnaq-identity' }, 'rawnaq-modest-day']] },
+      { label: 'Campaign posts', rows: [['rawnaq-look-brown', 'rawnaq-look-white', 'rawnaq-look-seated', 'rawnaq-look-hijab']] },
+    ],
+  ),
   xpark: define({
     slug: 'xpark-infinix',
     title: 'Xpark × Infinix',
@@ -217,16 +230,16 @@ export const works: Work[] = [
     slug: 'social-media',
     title: 'Social Media & Campaigns',
     discipline: 'Graphic design',
-    summary: 'Campaigns, product launches and always-on content for fintech, tech, banking and FMCG brands.',
+    summary: 'Campaigns, product launches and always-on content for fintech, fashion, tech, banking and FMCG brands.',
     intro: 'Social media design, campaign visuals and advertising key visuals — built for the feed, in Arabic and English.',
     meta: [
-      { label: 'Brands', value: 'Sahl · Klivvr · Xpark × Infinix · Beity · Bonz · Banque Misr · Almarai · Jira Market' },
+      { label: 'Brands', value: 'Sahl · Rawnaq · Klivvr · Xpark × Infinix · Beity · Bonz · Banque Misr · Almarai · Jira Market' },
       { label: 'Discipline', value: 'Social media & advertising design' },
       { label: 'Role', value: 'Graphic designer' },
     ],
     tags: ['Social media design', 'Campaign visuals', 'Product launch posts', 'Mascot-led content', 'Promotional offers', 'Engagement posts', 'Arabic typography', 'Photo compositing', 'Ad creatives'],
-    cover: covers('sahl-post-app', 'xpark-zero-x-astronaut', 'ad-banque-misr'),
-    groups: [projects.sahlSocial, projects.xpark, projects.klivvr, projects.fmcg, projects.advertising],
+    cover: covers('sahl-post-app', 'rawnaq-modest-day', 'klivvr-groceries'),
+    groups: [projects.sahlSocial, projects.rawnaq, projects.xpark, projects.klivvr, projects.fmcg, projects.advertising],
   },
   {
     slug: 'sahl-mascot',
@@ -348,13 +361,13 @@ export const bookSpreads: { key: MediaKey; caption: string }[] = [
  */
 export const heroArtwork: { key: MediaKey; work: WorkSlug; label: string }[] = [
   { key: 'sahl-post-app', work: 'social-media', label: 'Sahl social campaign' },
-  { key: 'xpark-zero-x-astronaut', work: 'social-media', label: 'Xpark × Infinix launch' },
-  { key: 'ad-banque-misr', work: 'social-media', label: 'Banque Misr key visual' },
+  { key: 'rawnaq-modest-day', work: 'social-media', label: 'Rawnaq fashion campaign' },
+  { key: 'sahl-installments', work: 'social-media', label: 'Sahl campaign key visual' },
+  { key: 'rawnaq-look-brown', work: 'social-media', label: 'Rawnaq fashion campaign' },
   { key: 'sahl-post-orange', work: 'social-media', label: 'Sahl social campaign' },
-  { key: 'xpark-note-11', work: 'social-media', label: 'Xpark × Infinix launch' },
-  { key: 'ad-almarai', work: 'social-media', label: 'Almarai key visual' },
-  { key: 'sahl-post-electricity', work: 'social-media', label: 'Sahl social campaign' },
-  { key: 'xpark-hot-11', work: 'social-media', label: 'Xpark × Infinix launch' },
-  { key: 'sahl-post-university', work: 'social-media', label: 'Sahl social campaign' },
-  { key: 'xpark-zero-x-dress', work: 'social-media', label: 'Xpark × Infinix launch' },
+  { key: 'rawnaq-look-hijab', work: 'social-media', label: 'Rawnaq fashion campaign' },
+  { key: 'sahl-summer', work: 'social-media', label: 'Sahl social campaign' },
+  { key: 'rawnaq-look-white', work: 'social-media', label: 'Rawnaq fashion campaign' },
+  { key: 'sahl-ramadan-cashback', work: 'social-media', label: 'Sahl cashback offer' },
+  { key: 'rawnaq-look-seated', work: 'social-media', label: 'Rawnaq fashion campaign' },
 ]
