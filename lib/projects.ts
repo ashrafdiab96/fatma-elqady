@@ -219,6 +219,8 @@ export type Work = {
   tags: string[]
   /** One to three pieces composed into the card and page cover. */
   cover: Media[]
+  /** A longer run of pieces shown as a strip on the homepage card in place of the cover. */
+  strip?: Media[]
   groups: Project[]
 }
 
@@ -239,6 +241,7 @@ export const works: Work[] = [
     ],
     tags: ['Social media design', 'Campaign visuals', 'Product launch posts', 'Mascot-led content', 'Promotional offers', 'Engagement posts', 'Arabic typography', 'Photo compositing', 'Ad creatives'],
     cover: covers('sahl-post-app', 'rawnaq-modest-day', 'klivvr-groceries'),
+    strip: covers('beity-mango', 'rawnaq-look-brown', 'klivvr-groceries', 'sahl-post-app', 'rawnaq-modest-day', 'sahl-installments', 'bonz-hoot'),
     groups: [projects.rawnaq, projects.sahlSocial, projects.klivvr, projects.fmcg, projects.advertising, projects.xpark],
   },
   {
@@ -253,7 +256,7 @@ export const works: Work[] = [
       { label: 'Deliverables', value: 'Exploration sketches · Character development · Model sheet · Social applications' },
     ],
     tags: ['Mascot design', 'Character development', 'Model sheet', 'Brand character', 'Social applications'],
-    cover: covers('sahl-sketch-fennec', 'sahl-palette-blue', 'sahl-budz-final'),
+    cover: covers('sahl-post-budz-id', 'sahl-post-electricity', 'sahl-post-internet'),
     groups: [],
   },
   {

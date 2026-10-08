@@ -14,13 +14,18 @@ function fit(images: Media[], frame: number) {
   return images.map((image) => ({ w: ((image.ratio * height) / frame) * 100, h: height * 100 }))
 }
 
-export function WorkCover({ images, frame, mobileFrame = frame, sizes, eager = false, className = '' }: { images: Media[]; frame: number; mobileFrame?: number; sizes: string; eager?: boolean; className?: string }) {
-  const single = images.length === 1 && Math.abs(images[0].ratio - frame) / frame < 0.25
-  const desktop = fit(images, frame)
-  const mobile = fit(images, mobileFrame)
+/** A strip runs every piece at one fixed height and lets the row overflow the frame on both sides. */
+function strip(images: Media[], frame: number, height = 0.66) {
+  return images.map((image) => ({ w: ((image.ratio * height) / frame) * 100, h: height * 100 }))
+}
+
+export function WorkCover({ images, frame, mobileFrame = frame, sizes, eager = false, isStrip = false, className = '' }: { images: Media[]; frame: number; mobileFrame?: number; sizes: string; eager?: boolean; isStrip?: boolean; className?: string }) {
+  const single = !isStrip && images.length === 1 && Math.abs(images[0].ratio - frame) / frame < 0.25
+  const desktop = isStrip ? strip(images, frame) : fit(images, frame)
+  const mobile = isStrip ? strip(images, mobileFrame) : fit(images, mobileFrame)
 
   return (
-    <div className={`work-cover ${single ? 'is-fill' : ''} ${className}`} style={{ '--frame': frame, '--frame-m': mobileFrame } as CSSProperties}>
+    <div className={`work-cover ${single ? 'is-fill' : ''} ${isStrip ? 'is-strip' : ''} ${className}`} style={{ '--frame': frame, '--frame-m': mobileFrame } as CSSProperties}>
       {images.map((image, index) => (
         <span
           key={image.key}

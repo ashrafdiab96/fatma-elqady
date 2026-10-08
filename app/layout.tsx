@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from 'next'
-import { Bricolage_Grotesque, Instrument_Serif, Lalezar } from 'next/font/google'
+import { Bricolage_Grotesque, Lalezar } from 'next/font/google'
 import './globals.css'
 import { SiteShell } from '@/components/site-shell'
 import { asset } from '@/lib/site'
 
 const display = Bricolage_Grotesque({ subsets: ['latin'], axes: ['opsz', 'wdth'], variable: '--font-display', display: 'swap' })
-const serif = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-serif', display: 'swap' })
 const arabic = Lalezar({ subsets: ['arabic'], weight: '400', variable: '--font-arabic', display: 'swap' })
 
 export const metadata: Metadata = {
@@ -45,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${display.variable} ${serif.variable} ${arabic.variable}`}>
+    <html lang="en" className={`${display.variable} ${arabic.variable}`}>
       <body className="antialiased">
         <SiteShell>{children}</SiteShell>
       </body>

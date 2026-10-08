@@ -34,14 +34,6 @@ function WorkCard({ work, index }: { work: (typeof works)[number]; index: number
       transition={{ duration: 0.9, ease, delay: wide ? 0 : (index % 2) * 0.08 }}
     >
       <Link href={workHref(work.slug)} className="work-card-link" data-cursor="Open">
-        <WorkCover
-          images={work.cover}
-          frame={wide ? 2.4 : 1.3}
-          mobileFrame={work.cover.length > 1 ? 1.5 : 1.25}
-          sizes={wide ? '(min-width: 900px) 30vw, 40vw' : '(min-width: 900px) 18vw, 40vw'}
-          eager={index < 1}
-          className="work-card-cover"
-        />
         <div className="work-card-meta">
           <span className="work-card-index">{String(index + 1).padStart(2, '0')}</span>
           <div>
@@ -51,6 +43,15 @@ function WorkCard({ work, index }: { work: (typeof works)[number]; index: number
           <ArrowUpRight aria-hidden="true" />
         </div>
         <p className="work-card-summary">{work.summary}</p>
+        <WorkCover
+          images={(wide && work.strip) || work.cover}
+          isStrip={wide && !!work.strip}
+          frame={wide ? 2.4 : 1.3}
+          mobileFrame={work.cover.length > 1 ? 1.5 : 1.25}
+          sizes={wide ? '(min-width: 900px) 30vw, 40vw' : '(min-width: 900px) 18vw, 40vw'}
+          eager={index < 1}
+          className="work-card-cover"
+        />
       </Link>
     </motion.article>
   )
