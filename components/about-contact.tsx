@@ -145,7 +145,7 @@ export function ContactSection() {
       <div className="contact-content">
         <MaskLines as="h2" id="contact-title" lines={['Have a project', <>in <em>mind?</em></>]} />
         <a className="contact-email" href={`mailto:${email}`} data-cursor="Write">
-          <span>fatmaelkady<wbr />@gmail.com</span> <ArrowUpRight aria-hidden="true" />
+          <span>{email.split('@')[0]}<wbr />@{email.split('@')[1]}</span> <ArrowUpRight aria-hidden="true" />
         </a>
         <div className="contact-actions">
           <button type="button" onClick={copyEmail} aria-live="polite"><Copy aria-hidden="true" /> {copied ? 'Email copied' : 'Copy email'}</button>
